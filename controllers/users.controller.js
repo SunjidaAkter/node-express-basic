@@ -64,10 +64,10 @@ module.exports.updateMultipleUsers = (req, res) => {
 
         for (const updateInfo of updateData) {
             const updateIndex = users?.findIndex(
-                user => user.id == updateInfo.id
+                (user) => user.id == updateInfo.id
             );
             const updateDataIndex = updateData?.findIndex(
-                user => user.id == updateInfo.id
+                (user) => user.id == updateInfo.id
             );
             if (updateIndex > -1) {
                 users[updateIndex] = {
@@ -86,17 +86,20 @@ module.exports.updateMultipleUsers = (req, res) => {
                     }
                 );
             } else {
-                res.status(400).json({ message: "internal error" });
+                res.status(400).json({ error: "please provide info" });
             }
-            // console.log(allUser);
+            console.log(users);
         }
     }
-
+    if (error) {
+        res.status(400).json({ error: "please provide info" });
+    }
 };
+
 // module.exports.updateMultipleUsers = (req, res) => {
 //     const updateIndex = users.findIndex(user => user.id === req.body.id);
 //     if (updateIndex > -1) {
-//         const updatedUser = updateOneuserProp(allUsers.users[updateIndex], req.body);
+//         const updatedUser = updateOneuserProp(userss.users[updateIndex], req.body);
 //         users.splice(updateIndex, 1, updatedUser);
 //         res.status(200).send(users);
 //     } else {

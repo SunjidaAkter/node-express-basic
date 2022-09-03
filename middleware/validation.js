@@ -128,19 +128,29 @@ module.exports.userValidation = (req, res, next) => {
 module.exports.bodyValidation = (req, res, next) => {
     const userData = req.body;
 
+    if (userData.length === 0 || !userData) {
+        req.error = "error";
+        console.log("error");
+        res.status(400).json({ error: "please provide user info" });
+        next();
+    }
 
     userData?.map((user) => {
         if (!user.id) {
             req.error = "error";
             res.status(400).json({ error: "please provide user id" });
-
             next();
         }
 
-        if (!user.gender && !user.name && !user.contact && !user.address && !user.photoUrl) {
+        if (
+            !user.gender &&
+            !user.name &&
+            !user.contact &&
+            !user.address &&
+            !user.photoUrl
+        ) {
             req.error = "error";
             res.status(400).json({ error: "please provide user information" });
-
             next();
         }
     });
@@ -148,5 +158,4 @@ module.exports.bodyValidation = (req, res, next) => {
     if (!req.error) {
         next();
     }
-
 };
