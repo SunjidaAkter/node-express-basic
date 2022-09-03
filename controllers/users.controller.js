@@ -96,16 +96,7 @@ module.exports.updateMultipleUsers = (req, res) => {
     }
 };
 
-// module.exports.updateMultipleUsers = (req, res) => {
-//     const updateIndex = users.findIndex(user => user.id === req.body.id);
-//     if (updateIndex > -1) {
-//         const updatedUser = updateOneuserProp(userss.users[updateIndex], req.body);
-//         users.splice(updateIndex, 1, updatedUser);
-//         res.status(200).send(users);
-//     } else {
-//         throw new Error("Didn't find the user!")
-//     }
-// }
+
 
 module.exports.deleteUser = (req, res) => {
     const { id } = req.params;

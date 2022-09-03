@@ -26,7 +26,7 @@ module.exports.uniqueParamsIdValidation = (req, res, next) => {
     const checkID = users.filter((data) => data.id === _id);
     console.log(checkID.length)
     if (checkID.length == 0) {
-        res.status(400).json({ error: "user id is already deleted" });
+        res.status(400).json({ error: "user is already deleted" });
         req.error = "error";
 
     } else {
@@ -121,7 +121,7 @@ module.exports.userValidation = (req, res, next) => {
             res.status(406).json({ error: "please enter user photoUrl" });
         }
         req.error = "error";
-        next();
+
     }
 };
 
