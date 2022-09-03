@@ -10,7 +10,9 @@ fs.readFile('./public/fake.json', 'utf8', (err, data) => {
 });
 
 module.exports.getAllUsers = (req, res) => {
-    res.status(200).send(users);
+    const { limit } = req.query;
+    const userLength = !isNaN(limit) ? limit : users.length;
+    res.status(200).json(users.slice(0, userLength))
 };
 
 module.exports.getARandomUser = (req, res) => {
@@ -20,26 +22,100 @@ module.exports.getARandomUser = (req, res) => {
 
 module.exports.saveAUser = (req, res) => {
     users.push(req.body);
-    res.status(200).send(users);
+    const myUsers = JSON.stringify(users);
+    fs.writeFile("./public/fake.json", myUsers, (error) => {
+        if (error) {
+            res.status(500).json({ message: "internal error" });
+            res.end()
+        } else {
+            res.status(201).json({ message: "user created" });
+            res.end()
+        }
+    });
+    // res.status(200).send(users);
+
 };
 
-// module.exports.updateAUser = (req, res) => {
-//     const { id } = req.params;
-//     const newUser = users.find(user => user.id === Number(id));
+module.exports.updateAUser = (req, res) => {
+    const { id } = req.body;
+    const newUser = users.find(user => user.id === Number(id));
+    newUser.id = Number(id);
+    newUser.gender = req.body.gender;
+    newUser.name = req.body.name;
+    newUser.contact = req.body.contact;
+    newUser.address = req.body.address;
+    newUser.photoUrl = req.body.photoUrl;
+    const myUsers = JSON.stringify([users, newUser]);
+    fs.writeFile("./public/fake.json", myUsers, (error) => {
+        if (error) {
+            res.status(500).json({ message: "internal error" });
+            res.end()
+        } else {
+            res.status(201).json({ message: "user updated" });
+            res.end()
+        }
+    });
+    // res.status(200).send(newUser);
+};
+module.exports.updateMultipleUsers = (req, res) => {
+    const error = req.error;
+    const updateData = req.body;
+    if (!error) {
 
-//     newUser.id = id;
-//     newUser.gender = req.body.gender;
-//     newUser.name = req.body.name;
-//     newUser.contact = req.body.contact;
-//     newUser.address = req.body.address;
-//     newUser.photoUrl = req.body.photoUrl;
+        for (const updateInfo of updateData) {
+            const updateIndex = users?.findIndex(
+                user => user.id == updateInfo.id
+            );
+            const updateDataIndex = updateData?.findIndex(
+                user => user.id == updateInfo.id
+            );
+            if (updateIndex > -1) {
+                users[updateIndex] = {
+                    ...users[updateIndex],
+                    ...updateData[updateDataIndex],
+                };
+                fs.writeFile(
+                    "./public/fake.json",
+                    JSON.stringify(users),
+                    (error) => {
+                        if (error) {
+                            res.status(500).json({ message: "internal error" });
+                        } else {
+                            res.status(201).json({ message: "users Updated" });
+                        }
+                    }
+                );
+            } else {
+                res.status(400).json({ message: "internal error" });
+            }
+            // console.log(allUser);
+        }
+    }
 
-//     res.status(200).send(newUser);
-
-// };
+};
+// module.exports.updateMultipleUsers = (req, res) => {
+//     const updateIndex = users.findIndex(user => user.id === req.body.id);
+//     if (updateIndex > -1) {
+//         const updatedUser = updateOneuserProp(allUsers.users[updateIndex], req.body);
+//         users.splice(updateIndex, 1, updatedUser);
+//         res.status(200).send(users);
+//     } else {
+//         throw new Error("Didn't find the user!")
+//     }
+// }
 
 module.exports.deleteUser = (req, res) => {
     const { id } = req.params;
     users = users.filter(user => user.id !== Number(id));
-    res.status(200).send(users);
+    const myUsers = JSON.stringify(users);
+    fs.writeFile("./public/fake.json", myUsers, (error) => {
+        if (error) {
+            res.status(500).json({ message: "internal error" });
+            res.end()
+        } else {
+            res.status(201).json({ message: "user deleted" });
+            res.end()
+        }
+    });
+    // res.status(200).send(users);
 };
